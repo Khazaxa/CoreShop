@@ -1,12 +1,7 @@
 ﻿services:
-  api:
-    image: api
-    build:
-      context: .
-      dockerfile: API/Dockerfile
   mysql:
     image: mysql:8.0
-    container_name: MySQL
+    container_name: Database
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
