@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Domain.Addresses.Entities;
 using Domain.Users.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,33 +12,44 @@ internal class User
 
     private User() {}
 
-    public User(string userName, string email, byte[] passwordHash, byte[] passwordSalt, UserRole role)
+    public User(
+        string name, 
+        string surname, 
+        string phone, 
+        string email, 
+        byte[] passwordHash,
+        byte[] passwordSalt, 
+        UserRole role)
     {
-        UserName = userName;
+        Name = name;
+        Surname = surname;
+        Phone = phone;
         Email = email;
         PasswordHash = passwordHash;
         PasswordSalt = passwordSalt;
         Role = role;
     }
     
-    
     public int Id { get; private init; }
     [MaxLength(NameMaxLength)]
-    public string UserName { get; private init; }
+    public string Name { get; private init; }
+    public string Surname { get; private init; }
+    public string Phone { get; private init; }
+    [EmailAddress]
     [MaxLength(EmailMaxLength)]
     public string Email { get; private init; }
     public byte[] PasswordHash { get; private init; }
     public byte[] PasswordSalt { get; private init; }
+    public List<int>? AddressId { get; private init; }
+    public List<Address>? Address { get; private init; }
     public UserRole Role { get; private init; }
     
-
     public static void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<User>().HasIndex(x => x.Email).IsUnique();
-        // builder.Entity<User>()
-        //     .HasOne(u => u.Desk)
-        //     .WithOne(d => d.User)
-        //     .HasForeignKey<User>(u => u.DeskId)
-        //     .OnDelete(DeleteBehavior.SetNull);
+        builder.Entity<User>()
+            .HasMany(u => u.Address)
+            .WithOne()
+            .HasForeignKey(a => a.Id);
     }
 }

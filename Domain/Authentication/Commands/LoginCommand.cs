@@ -10,27 +10,28 @@ namespace Domain.Authentication.Commands;
 public record LoginCommand(LoginParams Input) : ICommand<LoginResponseDto>;
 
 internal class LoginCommandHandler(
-    IUserRepository _userRepository, 
-    IAuthenticationService _authService
+    IUserRepository userRepository, 
+    IAuthenticationService authService
 ) : ICommandHandler<LoginCommand, LoginResponseDto>
 {
     public async Task<LoginResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var user = (await _userRepository.FindByEmailAsync(request.Input.Email, cancellationToken))
+        var user = (await userRepository.FindByEmailAsync(request.Input.Email, cancellationToken))
                    ?? throw new DomainException("User or password is incorrect",
                        (int)AuthenticationErrorCode.UserOrPasswordIncorrect);
 
-        var hash = _authService.ComputePasswordHash(request.Input.Password, user.PasswordSalt);
+        var hash = authService.ComputePasswordHash(request.Input.Password, user.PasswordSalt);
         if (!hash.SequenceEqual(user.PasswordHash))
             throw new DomainException("User or password is incorrect",
                 (int)AuthenticationErrorCode.UserOrPasswordIncorrect);
 
-        var token = _authService.GenerateToken(user.UserName, user.Role, user.Id);
+        var token = authService.GenerateToken(user.Email, user.Role, user.Id);
 
         return new LoginResponseDto(
             user.Id,
             user.Email,
-            user.UserName,
+            user.Name,
+            user.Surname,
             user.Role,
             token
         );

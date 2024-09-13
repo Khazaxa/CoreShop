@@ -5,7 +5,11 @@ namespace Domain.Users.Dto;
 
 public record UserParams(
     [Required]
-    string UserName,
+    string Name,
+    [Required]
+    string Surname,
+    [Required]
+    string Phone,
     [Required]
     string Email,
     [Required]

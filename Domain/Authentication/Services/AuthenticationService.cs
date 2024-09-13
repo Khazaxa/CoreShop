@@ -12,7 +12,7 @@ namespace Domain.Authentication.Services;
 
 public class AuthenticationService(IConfiguration configuration) : IAuthenticationService
 {
-    public string GenerateToken(string userName, UserRole role, int userId)
+    public string GenerateToken(string email, UserRole role, int userId)
     {
         var jwtKey = configuration["App:Jwt:Key"];
         if (string.IsNullOrEmpty(jwtKey))
@@ -23,7 +23,7 @@ public class AuthenticationService(IConfiguration configuration) : IAuthenticati
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, userName),
+            new Claim(JwtRegisteredClaimNames.Sub, email),
             new Claim(JwtRegisteredClaimNames.NameId, userId.ToString()),
             new Claim(ClaimTypes.Role, role.ToString()),
             new Claim("UserId", userId.ToString())
