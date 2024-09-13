@@ -4,6 +4,7 @@ using Autofac.Extensions.DependencyInjection;
 using Core.Configuration;
 using Core.Exceptions.Middleware;
 using Domain;
+using Domain.Users.Services;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -43,7 +44,7 @@ public class Program
                             Id = "Bearer"
                         }
                     },
-                    []
+                    new string[] {}
                 }
             });
         });
@@ -100,6 +101,9 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             DomainModule.MigrateDatabase(scope);
+            var appConfiguration = scope.ServiceProvider.GetRequiredService<IAppConfiguration>();
+            SeedInitialData(scope, appConfiguration);
+            DomainModule.MigrateDatabase(scope);
         }
 
         app.Run();
@@ -114,5 +118,21 @@ public class Program
             containerBuilder.RegisterInstance(new AppConfiguration(appBuilder.Configuration))
                 .As<IAppConfiguration>().SingleInstance();
         });
+    }
+
+    private static void SeedInitialData(IServiceScope scope, IAppConfiguration configuration)
+    {
+        var admin = configuration.Admin;
+        var services = scope.ServiceProvider;
+        var userService = services.GetRequiredService<IUserService>();
+        
+        userService.CreateInitialUserAsync(
+            admin.Email,
+            admin.Password,
+            admin.Name,
+            admin.Surname,
+            admin.AreaCode,
+            admin.Phone,
+            CancellationToken.None).GetAwaiter().GetResult();
     }
 }
