@@ -1,6 +1,7 @@
 namespace Domain.Addresses.Dto;
 
 public record AddressDto(
+    int Id,
     string? Street,
     int Number,
     int? Apartment,

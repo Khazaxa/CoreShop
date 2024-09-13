@@ -1,5 +1,6 @@
 using Domain.Addresses.Entities;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Addresses.Repositories;
 
@@ -17,4 +18,7 @@ internal class AddressRepository(ShopDbContext dbContext) : IAddressRepository
         var address = dbContext.Addresses.FirstOrDefault(a => a.Id == addressId);
         return await Task.FromResult(address);
     }
+
+    public async Task<List<Address>> FindAllAsync(int userId, CancellationToken cancellationToken)
+        => await await Task.FromResult(dbContext.Addresses.Where(a => a.UserId == userId).ToListAsync(cancellationToken));
 }
