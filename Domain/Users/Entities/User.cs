@@ -15,6 +15,7 @@ internal class User
     public User(
         string name, 
         string surname, 
+        string areaCode,
         string phone, 
         string email, 
         byte[] passwordHash,
@@ -23,6 +24,7 @@ internal class User
     {
         Name = name;
         Surname = surname;
+        AreaCode = areaCode;
         Phone = phone;
         Email = email;
         PasswordHash = passwordHash;
@@ -34,6 +36,7 @@ internal class User
     [MaxLength(NameMaxLength)]
     public string Name { get; private init; }
     public string Surname { get; private init; }
+    public string AreaCode { get; private init; }
     public string Phone { get; private init; }
     [EmailAddress]
     [MaxLength(EmailMaxLength)]
@@ -41,15 +44,15 @@ internal class User
     public byte[] PasswordHash { get; private init; }
     public byte[] PasswordSalt { get; private init; }
     public List<int>? AddressId { get; private init; }
-    public List<Address>? Address { get; private init; }
+    public List<Address>? Addresses { get; private init; }
     public UserRole Role { get; private init; }
     
     public static void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<User>().HasIndex(x => x.Email).IsUnique();
         builder.Entity<User>()
-            .HasMany(u => u.Address)
-            .WithOne()
-            .HasForeignKey(a => a.Id);
+            .HasMany(u => u.Addresses)
+            .WithOne(a => a.User)
+            .HasForeignKey(a => a.UserId);
     }
 }

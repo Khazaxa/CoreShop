@@ -26,6 +26,7 @@ internal class RegisterCommandHandler(
         var user = new User(
             input.Name,
             input.Surname,
+            input.AreaCode,
             input.Phone,
             input.Email,
             hmac.ComputeHash(Encoding.UTF8.GetBytes(input.Password)),

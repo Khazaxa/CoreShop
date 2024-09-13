@@ -1,5 +1,6 @@
 using System.Reflection;
 using Autofac;
+using Domain.Addresses;
 using Domain.Authentication;
 using Domain.Authentication.Services;
 using Domain.Users;
@@ -22,6 +23,7 @@ public class DomainModule(IConfigurationRoot configuration) : Module
         
         builder.RegisterInstance(configuration).As<IConfigurationRoot>();
         builder.RegisterModule<UsersModule>();
+        builder.RegisterModule<AddressesModule>();
         builder.RegisterModule<AuthenticationModule>();
         
         builder.RegisterType<UserContextService>().As<IUserContextService>().InstancePerLifetimeScope();

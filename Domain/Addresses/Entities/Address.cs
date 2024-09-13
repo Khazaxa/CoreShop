@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Addresses.Entities;
@@ -17,7 +18,8 @@ internal class Address
         int? apartment,
         string city,
         string postalCode,
-        string country)
+        string country,
+        int userId)
     {
         Street = street;
         Number = number;
@@ -25,6 +27,7 @@ internal class Address
         City = city;
         PostalCode = postalCode;
         Country = country;
+        UserId = userId;
     }
     
     public int Id { get; init; }
@@ -38,11 +41,20 @@ internal class Address
     public string Country { get; init; }
     public string FullAddress => $"{Street} {Number}/{Apartment}, {PostalCode} {City}, {Country}";
     public int UserId { get; init; }
-    
+    public User User { get; init; }
+    public bool IsMain { get; private set; }
+
+
+
+    public void MakeMain() => IsMain = true;
     
     public static void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<Address>()
             .HasKey(a => a.Id);
+        builder.Entity<Address>()
+            .HasOne(a => a.User)
+            .WithMany(u => u.Addresses)
+            .HasForeignKey(a => a.UserId);
     }
 }

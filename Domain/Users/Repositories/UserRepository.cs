@@ -14,4 +14,8 @@ internal class UserRepository(ShopDbContext dbContext) : IUserRepository
     
     public async Task<User?> FindByEmailAsync(string email, CancellationToken cancellationToken)
         => await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+
+    public bool MainAddressExistsAsync(int userId)
+       => dbContext.Users.Any(u => u.Addresses!
+                .Any(a => a.UserId == userId && a.IsMain));
 }

@@ -34,6 +34,7 @@ internal class UserService(IUserRepository userRepository,
         var user = new User(
             name,
             surname,
+            areaCode,
             phone,
             email,
             passwordHash: hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),

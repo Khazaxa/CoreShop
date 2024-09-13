@@ -4,6 +4,7 @@ using Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(ShopDbContext))]
-    partial class ShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240913170843_UpdatedUser2")]
+    partial class UpdatedUser2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,10 +28,7 @@ namespace Domain.Migrations
             modelBuilder.Entity("Domain.Addresses.Entities.Address", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("Apartment")
                         .HasColumnType("int");
@@ -41,9 +41,6 @@ namespace Domain.Migrations
                     b.Property<string>("Country")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("Number")
                         .HasColumnType("int");
@@ -60,8 +57,6 @@ namespace Domain.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Addresses");
                 });
@@ -120,18 +115,16 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Addresses.Entities.Address", b =>
                 {
-                    b.HasOne("Domain.Users.Entities.User", "User")
-                        .WithMany("Addresses")
-                        .HasForeignKey("UserId")
+                    b.HasOne("Domain.Users.Entities.User", null)
+                        .WithMany("Address")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Users.Entities.User", b =>
                 {
-                    b.Navigation("Addresses");
+                    b.Navigation("Address");
                 });
 #pragma warning restore 612, 618
         }

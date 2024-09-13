@@ -9,6 +9,8 @@ public record UserParams(
     [Required]
     string Surname,
     [Required]
+    string AreaCode,
+    [Required]
     string Phone,
     [Required]
     string Email,

@@ -6,5 +6,6 @@ public record AddressDto(
     int? Apartment,
     string City,
     string PostalCode,
-    string Country
+    string Country,
+    bool IsMain
     );

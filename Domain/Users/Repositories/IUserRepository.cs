@@ -6,4 +6,5 @@ internal interface IUserRepository
 {
     Task<User> AddAsync(User user, CancellationToken cancellationToken);
     Task<User?> FindByEmailAsync(string email, CancellationToken cancellationToken);
+    bool MainAddressExistsAsync(int userId);
 }
