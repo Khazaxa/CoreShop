@@ -3,10 +3,12 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Core.Configuration;
 using Core.Exceptions.Middleware;
+using Core.Mails;
 using Domain;
 using Domain.Users.Services;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API;
@@ -19,7 +21,7 @@ public class Program
 
         builder.Services.AddHttpContextAccessor();
         ConfigureDependencyInjection(builder);
-        
+        builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
         builder.Services.AddAuthorization();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(c =>
@@ -127,7 +129,7 @@ public class Program
         var userService = services.GetRequiredService<IUserService>();
         
         userService.CreateInitialUserAsync(
-            admin.Email,
+            admin!.Email,
             admin.Password,
             admin.Name,
             admin.Surname,

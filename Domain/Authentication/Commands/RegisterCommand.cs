@@ -7,6 +7,7 @@ using Domain.Users.Enums;
 using Domain.Users.Repositories;
 using Domain.Users.Services;
 using MediatR;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Domain.Authentication.Commands;
 
@@ -14,7 +15,8 @@ public record RegisterCommand(RegisterParams Input) : ICommand<int>;
 
 internal class RegisterCommandHandler(
     IUserRepository userRepository,
-    IUserService userService) : IRequestHandler<RegisterCommand, int>
+    IUserService userService,
+    IEmailSender emailSender) : IRequestHandler<RegisterCommand, int>
 {
     public async Task<int> Handle(RegisterCommand command, CancellationToken cancellationToken)
     {
@@ -35,6 +37,12 @@ internal class RegisterCommandHandler(
         );
 
         var registeredUser = await userRepository.AddAsync(user, cancellationToken);
+        
+        await emailSender.SendEmailAsync(
+            registeredUser.Email,
+            "Welcome to our platform",
+            "Welcome to our platform, we are glad to have you here!"
+        );
         
         return registeredUser.Id;
     }
