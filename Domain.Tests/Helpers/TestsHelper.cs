@@ -44,8 +44,8 @@ public class TestsHelper
     
         var address = new Address(
             "Street",
-            12,
-            12,
+            "12",
+            "12",
             "City",
             "PostalCode",
             "Country",
@@ -53,7 +53,6 @@ public class TestsHelper
         );
     
         var addressDto = new AddressDto(
-            address.Id,
             address.Street,
             address.Number,
             address.Apartment,

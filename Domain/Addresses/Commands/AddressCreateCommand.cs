@@ -2,7 +2,6 @@ using Core.CQRS;
 using Domain.Addresses.Dto;
 using Domain.Addresses.Entities;
 using Domain.Addresses.Repositories;
-using Domain.Addresses.Services;
 using Domain.Users.Repositories;
 using MediatR;
 

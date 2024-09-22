@@ -13,7 +13,6 @@ internal class AddressesGetQueryHandler(IAddressRepository addressRepository) : 
     {
         var addresses = await addressRepository.FindAllAsync(query.UserId, cancellationToken);
         var addressesDto = addresses.Select(address => new AddressDto(
-            address.Id, 
             address.Street,
             address.Number,
             address.Apartment,

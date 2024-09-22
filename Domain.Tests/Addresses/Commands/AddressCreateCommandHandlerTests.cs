@@ -35,8 +35,8 @@ namespace Domain.Tests.Addresses.Commands
             result.Should().Be(1);
             address?.Id.Should().Be(1);
             address?.Street.Should().Be("Street");
-            address?.Number.Should().Be(12);
-            address?.Apartment.Should().Be(12);
+            address?.Number.Should().Be("12");
+            address?.Apartment.Should().Be("12");
             address?.City.Should().Be("City");
             address?.PostalCode.Should().Be("PostalCode");
             address?.Country.Should().Be("Country");

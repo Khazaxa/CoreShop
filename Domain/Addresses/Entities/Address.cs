@@ -14,8 +14,8 @@ internal class Address
     
     public Address(
         string? street,
-        int number,
-        int? apartment,
+        string number,
+        string? apartment,
         string city,
         string postalCode,
         string country,
@@ -33,8 +33,8 @@ internal class Address
     public int Id { get; init; }
     [MaxLength(MaxStreetLength)]
     public string? Street { get; init; }
-    public int Number { get; init; }
-    public int? Apartment { get; init; }
+    public string Number { get; init; }
+    public string? Apartment { get; init; }
     [MaxLength(MaxCityLength)]
     public string City { get; init; }
     public string PostalCode { get; init; }
