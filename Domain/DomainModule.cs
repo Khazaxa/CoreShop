@@ -27,6 +27,7 @@ public class DomainModule(IConfigurationRoot configuration) : Module
         builder.RegisterModule<AuthenticationModule>();
         
         builder.RegisterType<UserContextService>().As<IUserContextService>().InstancePerLifetimeScope();
+        builder.RegisterType<Core.Database.UnitOfWork>().As<Core.Database.IUnitOfWork>().InstancePerLifetimeScope();
         
         RegisterDatabaseProviders(builder);
         RegisterMediator(builder);
@@ -59,6 +60,7 @@ public class DomainModule(IConfigurationRoot configuration) : Module
         var mediatorConfiguration = MediatRConfigurationBuilder
             .Create(Assembly.GetExecutingAssembly())
             .WithAllOpenGenericHandlerTypesRegistered()
+            .WithCustomPipelineBehavior(typeof(Core.CQRS.Behaviors.TransactionPipelineBehavior<,>))
             .WithRegistrationScope(RegistrationScope.Scoped)
             .Build();
 

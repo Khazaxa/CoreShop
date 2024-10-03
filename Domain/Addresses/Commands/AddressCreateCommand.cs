@@ -1,20 +1,30 @@
 using Core.CQRS;
+using Core.Database;
 using Domain.Addresses.Dto;
 using Domain.Addresses.Entities;
 using Domain.Addresses.Repositories;
+using Domain.Authentication.Services;
 using Domain.Users.Repositories;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Domain.Addresses.Commands;
 
-public record AddressCreateCommand(AddressDto Params, int UserId) : ICommand<int>;
+public record AddressCreateCommand(AddressDto Params) : ICommand<int>;
 
 internal class AddressCreateCommandHandler(
     IUserRepository userRepository,
-    IAddressRepository addressRepository) : IRequestHandler<AddressCreateCommand, int>
+    IAddressRepository addressRepository,
+    IUserContextProvider userContext,
+    IUnitOfWork unitOfWork,
+    ILogger<AddressCreateCommandHandler> logger) : IRequestHandler<AddressCreateCommand, int>
 {
     public async Task<int> Handle(AddressCreateCommand command, CancellationToken cancellationToken)
     {
+        var userEmail = userContext.Get().UserEmail;
+        
+        var user = await userRepository.FindByEmailAsync(userEmail, cancellationToken);
+
         var address = new Address(
             command.Params.Street,
             command.Params.Number,
@@ -22,14 +32,15 @@ internal class AddressCreateCommandHandler(
             command.Params.City,
             command.Params.PostalCode,
             command.Params.Country,
-            command.UserId
+           user.Id
         );
-        
-        if(!userRepository.MainAddressExistsAsync(command.UserId))
-            address.MakeMain();
 
-        var addedAddress = await addressRepository.AddAsync(address, cancellationToken);
+        addressRepository.Add(address);
+        logger.LogInformation("Address added to repository");
 
-        return addedAddress.Id;
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Changes saved to database");
+
+        return address.Id;
     }
 }

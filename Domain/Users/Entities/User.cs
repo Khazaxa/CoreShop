@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using Core.Database;
 using Domain.Addresses.Entities;
 using Domain.Users.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Users.Entities;
 
-internal class User
+internal class User : EntityBase
 {
     public const int EmailMaxLength = 64;
     public const int NameMaxLength = 64;
@@ -32,7 +33,6 @@ internal class User
         Role = role;
     }
     
-    public int Id { get; private init; }
     [MaxLength(NameMaxLength)]
     public string Name { get; private init; }
     public string Surname { get; private init; }

@@ -1,5 +1,7 @@
+using Core.Exceptions;
 using Domain.Authentication.Commands;
 using Domain.Authentication.Dto;
+using Domain.Users.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

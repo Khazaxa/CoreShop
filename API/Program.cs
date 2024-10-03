@@ -1,10 +1,13 @@
 using System.Text;
+using API.Middlewares;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Core.Configuration;
+using Core.Database;
 using Core.Exceptions.Middleware;
 using Core.Mails;
 using Domain;
+using Domain.Authentication.Services;
 using Domain.Users.Services;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,7 +18,7 @@ namespace API;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -50,14 +53,14 @@ public class Program
                 }
             });
         });
-        
+
         var env = builder.Environment;
         builder.Configuration
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables();
-        
+
         var jwtKey = builder.Configuration["App:Jwt:Key"];
         if (string.IsNullOrEmpty(jwtKey))
             throw new ArgumentNullException(nameof(jwtKey), "JWT Key is not configured.");
@@ -83,9 +86,9 @@ public class Program
 
         builder.Services.AddControllers();
         var app = builder.Build();
-        
+
         app.UseMiddleware<ExceptionMiddleware>();
-        
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -98,43 +101,36 @@ public class Program
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseMiddleware<UserContextMiddleware>();
         app.MapControllers();
-        
+
         using (var scope = app.Services.CreateScope())
         {
             DomainModule.MigrateDatabase(scope);
-            var appConfiguration = scope.ServiceProvider.GetRequiredService<IAppConfiguration>();
-            SeedInitialData(scope, appConfiguration);
+            await scope.ServiceProvider.GetService<ISystemUserContext>()!.InitializeAsync();
+            await SeedDataAsync(scope, scope.ServiceProvider.GetService<IUnitOfWork>()!);
             DomainModule.MigrateDatabase(scope);
         }
 
         app.Run();
     }
-    
+
     private static void ConfigureDependencyInjection(WebApplicationBuilder appBuilder)
     {
         appBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         appBuilder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         {
+            containerBuilder.RegisterModule(new ApiModule());
             containerBuilder.RegisterModule(new DomainModule(appBuilder.Configuration));
             containerBuilder.RegisterInstance(new AppConfiguration(appBuilder.Configuration))
                 .As<IAppConfiguration>().SingleInstance();
         });
     }
 
-    private static void SeedInitialData(IServiceScope scope, IAppConfiguration configuration)
+    private static async Task SeedDataAsync(IServiceScope scope, IUnitOfWork unitOfWork)
     {
-        var admin = configuration.Admin;
-        var services = scope.ServiceProvider;
-        var userService = services.GetRequiredService<IUserService>();
-        
-        userService.CreateInitialUserAsync(
-            admin!.Email,
-            admin.Password,
-            admin.Name,
-            admin.Surname,
-            admin.AreaCode,
-            admin.Phone,
-            CancellationToken.None).GetAwaiter().GetResult();
+        var userService = scope.ServiceProvider.GetService<IUserService>();
+        if (userService != null) await userService.SeedUserAsync();
+        await unitOfWork.SaveChangesAsync();
     }
 }

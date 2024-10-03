@@ -9,5 +9,7 @@ public class AuthenticationModule : Module
         base.Load(builder);
         
         builder.RegisterType<Services.AuthenticationService>().AsImplementedInterfaces();
+        builder.RegisterType<Services.UserContextProvider>().AsImplementedInterfaces().InstancePerLifetimeScope();
+        builder.RegisterType<Services.SystemUserContext>().As<Services.ISystemUserContext>().SingleInstance();
     }
 }

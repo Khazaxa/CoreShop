@@ -2,5 +2,6 @@ namespace Domain.Users.Enums;
 
 public enum UserErrorCode
 {
-    EmailInUse = 1,
+    UserNotFound = 1,
+    EmailInUse = 2
 }

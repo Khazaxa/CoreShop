@@ -32,8 +32,8 @@ internal class UserCreateCommandHandler(
             input.Role
         );
 
-        var addedUser = await userRepository.AddAsync(user, cancellationToken);
+        userRepository.Add(user);
 
-        return addedUser.Id;
+        return user.Id;
     }
 }

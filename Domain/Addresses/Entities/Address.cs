@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using Core.Database;
 using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Addresses.Entities;
 
-internal class Address
+internal class Address : EntityBase
 {
     private Address () {}
     
@@ -30,7 +31,6 @@ internal class Address
         UserId = userId;
     }
     
-    public int Id { get; init; }
     [MaxLength(MaxStreetLength)]
     public string? Street { get; init; }
     public string Number { get; init; }

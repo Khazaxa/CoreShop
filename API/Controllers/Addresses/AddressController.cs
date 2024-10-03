@@ -13,16 +13,10 @@ public class AddressController(IMediator mediator, ILogger<AddressController> lo
     [HttpPost]
     [Route("address")]
     public async Task<int> CreateAddress(AddressDto addressParams, CancellationToken cancellationToken)
-    {
-        var userId = GetUserId();
-        return await mediator.Send(new AddressCreateCommand(addressParams, userId), cancellationToken);
-    }
+        => await mediator.Send(new AddressCreateCommand(addressParams), cancellationToken);
 
     [HttpGet]
-    [Route("addresses")]
-    public async Task<List<AddressDto>> GetAddresses(CancellationToken cancellationToken)
-    {
-        var userId = GetUserId();
-        return await mediator.Send(new AddressesGetQuery(userId), cancellationToken);
-    }
+    [Route("address/{addressId}")]
+    public async Task<AddressDto> AddressDetails(int addressId, CancellationToken cancellationToken)
+        => await mediator.Send(new AddressDetailsQuery(addressId), cancellationToken);
 }

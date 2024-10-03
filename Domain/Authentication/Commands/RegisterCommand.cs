@@ -36,14 +36,14 @@ internal class RegisterCommandHandler(
             UserRole.Client
         );
 
-        var registeredUser = await userRepository.AddAsync(user, cancellationToken);
+        userRepository.Add(user);
         
         await emailSender.SendEmailAsync(
-            registeredUser.Email,
+            user.Email,
             "Welcome to our platform",
             "Welcome to our platform, we are glad to have you here!"
         );
         
-        return registeredUser.Id;
+        return user.Id;
     }
 }
