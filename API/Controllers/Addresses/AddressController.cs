@@ -19,4 +19,9 @@ public class AddressController(IMediator mediator, ILogger<AddressController> lo
     [Route("address/{addressId}")]
     public async Task<AddressDto> AddressDetails(int addressId, CancellationToken cancellationToken)
         => await mediator.Send(new AddressDetailsQuery(addressId), cancellationToken);
+    
+    [HttpPut]
+    [Route("address/{addressId}")]
+    public async Task<Unit> UpdateAddress(int addressId, AddressParams addressParams, CancellationToken cancellationToken)
+        => await mediator.Send(new AddressUpdateCommand(addressId, addressParams), cancellationToken);
 }
