@@ -16,7 +16,9 @@ internal class UserRepository(
 {
     public async Task<User> FindByEmailAsync(string email, CancellationToken cancellationToken)
     {
-        return await GetQuery().FirstOrDefaultAsync(x => x.Email == email, cancellationToken)
+        return await GetQuery()
+                   .Include(u => u.Addresses)
+                   .FirstOrDefaultAsync(x => x.Email == email, cancellationToken)
                ?? throw new DomainException("User not found", (int)UserErrorCode.UserNotFound);
     }
 

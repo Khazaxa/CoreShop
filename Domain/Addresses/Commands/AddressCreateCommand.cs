@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Domain.Addresses.Commands;
 
-public record AddressCreateCommand(AddressDto Params) : ICommand<int>;
+public record AddressCreateCommand(AddressParams Params) : ICommand<int>;
 
 internal class AddressCreateCommandHandler(
     IUserRepository userRepository,
@@ -34,7 +34,11 @@ internal class AddressCreateCommandHandler(
             command.Params.Country,
            user.Id
         );
-
+        
+        var containsMainAddress = user.Addresses.Any(a => a.IsMain);
+        if (!containsMainAddress)
+            address.MakeMain();
+        
         addressRepository.Add(address);
         logger.LogInformation("Address added to repository");
 

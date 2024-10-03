@@ -12,7 +12,7 @@ public class AddressController(IMediator mediator, ILogger<AddressController> lo
 {
     [HttpPost]
     [Route("address")]
-    public async Task<int> CreateAddress(AddressDto addressParams, CancellationToken cancellationToken)
+    public async Task<int> CreateAddress(AddressParams addressParams, CancellationToken cancellationToken)
         => await mediator.Send(new AddressCreateCommand(addressParams), cancellationToken);
 
     [HttpGet]
