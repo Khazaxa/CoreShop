@@ -1,18 +1,24 @@
 using Core.CQRS;
+using Core.Exceptions;
+using Domain.Addresses.Enum;
 using Domain.Users.Dto;
 using Domain.Users.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Users.Queries;
 
-public record UsersQuery() : IQuery<IEnumerable<UserDto>>;
+public record UsersQuery : IQuery<IEnumerable<UserDto>>;
 
 internal class UsersQueryHandler(
     IUserRepository userRepository) : IRequestHandler<UsersQuery, IEnumerable<UserDto>>
 {
     public async Task<IEnumerable<UserDto>> Handle(UsersQuery query, CancellationToken cancellationToken)
     {
-        var users = await userRepository.FindAsync(x => true, x => new UserDto(
+        var users = await userRepository.Query()
+            .Include(x => x.Addresses).ToListAsync(cancellationToken);
+    
+        var userDtos = users.Select(x => new UserDto(
             x.Id,
             x.Name,
             x.Surname,
@@ -20,9 +26,12 @@ internal class UsersQueryHandler(
             x.Phone,
             x.Email,
             x.Role,
-            x.Addresses!.Select(a => a.Id).ToList()
-        ), cancellationToken);
-
-        return users;
+            (x.Addresses 
+             ?? throw new DomainException("Address not found", (int)AddressErrorCode.AddressNotFound))
+            .Select(a => a.Id)
+            .ToList()
+        ));
+    
+        return userDtos;
     }
 }

@@ -12,7 +12,10 @@ internal class UserRepository(
     ShopDbContext dbContext
     ) : EntityRepositoryBase<User>(unitOfWork), IUserRepository
 {
-    public async Task<User> FindByEmailAsync(string email, CancellationToken cancellationToken)
+    public IQueryable<User> Query()
+        => dbContext.Users.AsQueryable();
+    
+    public async Task<User?> FindByEmailAsync(string email, CancellationToken cancellationToken)
     {
         var user = await dbContext.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken);
         if (user == null)
