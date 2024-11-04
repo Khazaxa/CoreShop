@@ -73,6 +73,16 @@ public abstract class EntityRepositoryBase<TEntity> : IEntityRepository<TEntity>
 	{
 		_dbSet.Add(entity);
 	}
+	
+	public void Update(TEntity entity)
+	{
+		_dbSet.Update(entity);
+	}
+	
+	public void Delete(TEntity entity)
+	{
+		_dbSet.Remove(entity);
+	}
 
 	private static async Task<IList<TEntity>> FindAsync(IList<int> ids, IQueryable<TEntity> query,
 		CancellationToken cancellationToken)

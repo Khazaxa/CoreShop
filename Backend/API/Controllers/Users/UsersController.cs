@@ -19,4 +19,9 @@ public class UsersController(IMediator mediator) : ControllerBase
     [Route("users")]
     public async Task<IEnumerable<UserDto>> GetUsers(CancellationToken cancellationToken)
         => await mediator.Send(new UsersQuery(), cancellationToken);
+    
+    [HttpDelete]
+    [Route("delete/{id}")]
+    public async Task<Unit> DeleteUser(int id, CancellationToken cancellationToken)
+        => await mediator.Send(new UserDeleteCommand(id), cancellationToken);
 }
