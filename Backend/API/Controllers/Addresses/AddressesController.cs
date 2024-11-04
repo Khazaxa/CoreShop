@@ -24,4 +24,9 @@ public class AddressesController(IMediator mediator, ILogger<AddressesController
     [Route("address/{addressId}")]
     public async Task<Unit> UpdateAddress(int addressId, AddressParams addressParams, CancellationToken cancellationToken)
         => await mediator.Send(new AddressUpdateCommand(addressId, addressParams), cancellationToken);
+    
+    [HttpDelete]
+    [Route("address/{addressId}")]
+    public async Task<Unit> DeleteAddress(int addressId, CancellationToken cancellationToken)
+        => await mediator.Send(new AddressDeleteCommand(addressId), cancellationToken);
 }
