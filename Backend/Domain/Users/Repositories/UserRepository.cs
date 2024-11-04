@@ -1,8 +1,6 @@
 using Core.Database;
-using Core.Exceptions;
 using Domain.Authentication.Services;
 using Domain.Users.Entities;
-using Domain.Users.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Users.Repositories;
@@ -33,10 +31,5 @@ internal class UserRepository(
             query = query.Where(x => x.Id == currentUser.UserId);
 
         return query;
-    }
-    
-    public async Task<bool> CanConnectAsync()
-    {
-        return await dbContext.Database.CanConnectAsync();
     }
 }
