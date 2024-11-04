@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Database;
 using Domain.Addresses.Entities;
+using Domain.Users.Dto;
 using Domain.Users.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,18 +35,28 @@ internal class User : EntityBase
     }
     
     [MaxLength(NameMaxLength)]
-    public string Name { get; private init; }
-    public string Surname { get; private init; }
-    public string AreaCode { get; private init; }
-    public string Phone { get; private init; }
+    public string Name { get; private set; }
+    public string Surname { get; private set; }
+    public string AreaCode { get; private set; }
+    public string Phone { get; private set; }
     [EmailAddress]
     [MaxLength(EmailMaxLength)]
-    public string Email { get; private init; }
-    public byte[] PasswordHash { get; private init; }
-    public byte[] PasswordSalt { get; private init; }
-    public List<int>? AddressId { get; private init; }
-    public List<Address>? Addresses { get; private init; }
-    public UserRole Role { get; private init; }
+    public string Email { get; private set; }
+    public byte[] PasswordHash { get; private set; }
+    public byte[] PasswordSalt { get; private set; }
+    public List<int>? AddressId { get; private set; }
+    public List<Address>? Addresses { get; private set; }
+    public UserRole Role { get; private set; }
+    
+    public void Update(UserParams userParams)
+    {
+        Name = userParams.Name;
+        Surname = userParams.Surname;
+        AreaCode = userParams.AreaCode;
+        Phone = userParams.Phone;
+        Email = userParams.Email;
+        Role = userParams.Role;
+    }
     
     public static void OnModelCreating(ModelBuilder builder)
     {

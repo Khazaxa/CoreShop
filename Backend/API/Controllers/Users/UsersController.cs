@@ -20,6 +20,11 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IEnumerable<UserDto>> GetUsers(CancellationToken cancellationToken)
         => await mediator.Send(new UsersQuery(), cancellationToken);
     
+    [HttpPut]
+    [Route("update/{id}")]
+    public async Task<Unit> UpdateUser(int id, UserParams userParams, CancellationToken cancellationToken)
+        => await mediator.Send(new UserUpdateCommand(id, userParams), cancellationToken);
+    
     [HttpDelete]
     [Route("delete/{id}")]
     public async Task<Unit> DeleteUser(int id, CancellationToken cancellationToken)
