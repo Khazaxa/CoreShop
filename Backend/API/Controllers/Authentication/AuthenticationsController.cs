@@ -11,7 +11,7 @@ namespace API.Controllers.Authentication;
 [ApiController]
 [Route("auth")]
 [AllowAnonymous]
-public class AuthenticationController(IMediator mediator) : ControllerBase
+public class AuthenticationsController(IMediator mediator) : ControllerBase
 {
     [HttpPost, Route("login")]
     public Task<LoginResponseDto> Login(LoginParams loginParams, CancellationToken cancellationToken)

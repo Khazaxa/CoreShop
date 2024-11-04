@@ -8,7 +8,7 @@ namespace API.Controllers.Addresses;
 
 [ApiController]
 [Route("")]
-public class AddressController(IMediator mediator, ILogger<AddressController> logger) : BaseController(logger)
+public class AddressesController(IMediator mediator, ILogger<AddressesController> logger) : BaseController(logger)
 {
     [HttpPost]
     [Route("address")]
