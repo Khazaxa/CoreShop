@@ -108,7 +108,6 @@ public class Program
         {
             DomainModule.MigrateDatabase(scope);
             await scope.ServiceProvider.GetService<ISystemUserContext>()!.InitializeAsync();
-            await SeedDataAsync(scope, scope.ServiceProvider.GetService<IUnitOfWork>()!);
             DomainModule.MigrateDatabase(scope);
         }
 
@@ -125,12 +124,5 @@ public class Program
             containerBuilder.RegisterInstance(new AppConfiguration(appBuilder.Configuration))
                 .As<IAppConfiguration>().SingleInstance();
         });
-    }
-
-    private static async Task SeedDataAsync(IServiceScope scope, IUnitOfWork unitOfWork)
-    {
-        var userService = scope.ServiceProvider.GetService<IUserService>();
-        if (userService != null) await userService.SeedUserAsync();
-        await unitOfWork.SaveChangesAsync();
     }
 }

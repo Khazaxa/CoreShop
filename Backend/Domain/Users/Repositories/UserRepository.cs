@@ -16,10 +16,12 @@ internal class UserRepository(
 {
     public async Task<User> FindByEmailAsync(string email, CancellationToken cancellationToken)
     {
-        return await GetQuery()
-                   .Include(u => u.Addresses)
-                   .FirstOrDefaultAsync(x => x.Email == email, cancellationToken)
-               ?? throw new DomainException("User not found", (int)UserErrorCode.UserNotFound);
+        var user = await dbContext.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken);
+        if (user == null)
+        {
+            return null;
+        }
+        return user;
     }
 
     protected override IQueryable<User> GetQuery()
